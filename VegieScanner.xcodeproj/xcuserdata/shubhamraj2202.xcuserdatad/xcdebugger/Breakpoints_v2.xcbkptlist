@@ -3,4 +3,68 @@
    uuid = "71E0268A-9827-484A-86AC-685E81FC226F"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "75C872EB-53B6-47F9-AFF2-5C6CDA43F303"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VegieScanner/GeminiAPI.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "analyze(image:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "96F891E9-F91C-47AA-8256-5783CFF7E275"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VegieScanner/GeminiAPI.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "101"
+            endingLineNumber = "101"
+            landmarkName = "analyze(image:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "96F891E9-F91C-47AA-8256-5783CFF7E275 - ac2238d12ed020e5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for VegieScanner.GeminiAPI.analyze(image: __C.UIImage) async throws -&gt; Swift.Optional&lt;VegieScanner.ScanResult&gt;"
+                  moduleName = "VegieScanner.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shubhamraj2202/Desktop/iOSApps/VegieScanner/VegieScanner/GeminiAPI.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "102"
+                  endingLineNumber = "102">
+               </Location>
+               <Location
+                  uuid = "96F891E9-F91C-47AA-8256-5783CFF7E275 - ac2238d12ed020c4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for VegieScanner.GeminiAPI.analyze(image: __C.UIImage) async throws -&gt; Swift.Optional&lt;VegieScanner.ScanResult&gt;"
+                  moduleName = "VegieScanner.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/shubhamraj2202/Desktop/iOSApps/VegieScanner/VegieScanner/GeminiAPI.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "101"
+                  endingLineNumber = "101">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

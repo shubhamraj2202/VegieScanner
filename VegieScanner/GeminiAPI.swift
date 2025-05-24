@@ -6,6 +6,7 @@
 //
 import Foundation
 import UIKit
+import SwiftUI
 
 //struct ScanResult: Identifiable, Codable {
 //    let id = UUID()
@@ -14,6 +15,7 @@ import UIKit
 //    let explanation: String
 //    let imageData: Data
 //}
+
 
 class GeminiAPI {
     static let shared = GeminiAPI()
@@ -43,16 +45,44 @@ class GeminiAPI {
 //        Confidence: <number>%
 //        Explanation: <detailed explanation here>
 //        """
-        let prompt = """
-        Is the food in this image vegan? Identify the food name as precisely as possible. Answer with one of these exact keywords only: "Vegan", "Not Vegan", or "Uncertain". Then give a detailed explanation and a confidence percentage.
+//        let prompt = """
+//        Is the food in this image vegan? Identify the food name as precisely as possible. Answer with one of these exact keywords only: "Vegan", "Not Vegan", or "Uncertain". Then give a detailed explanation and a confidence percentage.
+//
+//        Format your response exactly like this:
+//
+//        Food Name: <name or description of food>
+//        Status: <Vegan / Not Vegan / Uncertain>
+//        Confidence: <number>%
+//        Explanation: <detailed explanation here>
+//        """
+        
+        let isStrictVeganMode = UserDefaults.standard.bool(forKey: "isStrictVeganMode")
+        
+        let prompt: String
+        if isStrictVeganMode {
+            prompt = """
+            Is the food in this image vegan? Strictly flag any dairy, eggs, or animal-derived ingredients as not vegan. Identify the food name as precisely as possible. Answer with one of these exact keywords only: "Vegan", "Not Vegan", or "Uncertain". Then give a detailed explanation and a confidence percentage.
 
-        Format your response exactly like this:
+            Format your response exactly like this:
 
-        Food Name: <name or description of food>
-        Status: <Vegan / Not Vegan / Uncertain>
-        Confidence: <number>%
-        Explanation: <detailed explanation here>
-        """
+            Food Name: <name or description of food>
+            Status: <Vegan / Not Vegan / Uncertain>
+            Confidence: <number>%
+            Explanation: <detailed explanation here>
+            """
+        } else {
+            prompt = """
+            Is the food in this image vegetarian? Dairy products like milk, butter, paneer, or cheese are allowed. Avoid meat, fish, and eggs. Identify the food name as precisely as possible. Answer with one of these exact keywords only: "Vegetarian", "Not Vegetarian", or "Uncertain". Then give a detailed explanation and a confidence percentage.
+
+            Format your response exactly like this:
+
+            Food Name: <name or description of food>
+            Status: <Vegetarian / Not Vegetarian / Uncertain>
+            Confidence: <number>%
+            Explanation: <detailed explanation here>
+            """
+        }
+        
 
         let requestBody: [String: Any] = [
             "contents": [
@@ -105,11 +135,21 @@ func parseStructuredResponse(_ text: String) -> (foodName: String, status: Vegan
             foodName = line.dropFirst("food name:".count).trimmingCharacters(in: .whitespacesAndNewlines)
         } else if line.lowercased().starts(with: "status:") {
             let value = line.dropFirst("status:".count).trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+//            switch value {
+//                case "vegan": status = .vegan
+//                case "not vegan": status = .notVegan
+//                case "uncertain": status = .uncertain
+//                default: status = .uncertain
+//            }
             switch value {
-                case "vegan": status = .vegan
-                case "not vegan": status = .notVegan
-                case "uncertain": status = .uncertain
-                default: status = .uncertain
+            case "vegan", "vegetarian":
+                status = .vegan
+            case "not vegan", "not vegetarian":
+                status = .notVegan
+            case "uncertain":
+                status = .uncertain
+            default:
+                status = .uncertain
             }
         } else if line.lowercased().starts(with: "confidence:") {
             let value = line.dropFirst("confidence:".count).trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "%", with: "")

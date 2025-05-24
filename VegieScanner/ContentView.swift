@@ -1,5 +1,8 @@
 import SwiftUI
 
+
+
+
 struct ContentView: View {
     @State private var showImagePicker = false
     @State private var useCamera = false
@@ -139,38 +142,6 @@ struct ContentView: View {
                 self.showResult = true
             }
             isAnalyzing = false
-        }
-    }
-}
-
-struct SettingsView: View {
-    @AppStorage("isStrictVeganMode") private var isStrictVeganMode = true
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Scan Settings")) {
-                    Toggle("Strict Vegan Mode", isOn: $isStrictVeganMode)
-                    Text(isStrictVeganMode ?
-                        "When enabled, dairy, eggs, and other animal products are flagged as non-vegan." :
-                        "When disabled, dairy is allowed. This is suitable for vegetarian users.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.top, 2)
-                }
-
-                Section {
-                    Button("Contact Us") {
-                        // placeholder
-                    }
-                    Button("Close") {
-                        dismiss()
-                    }
-                }
-            }
-            .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
