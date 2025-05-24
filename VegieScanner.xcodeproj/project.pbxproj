@@ -6,13 +6,35 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		1FCE584A2DE0849A00BC7FFC /* ScanDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1FCE58482DE0849A00BC7FFC /* ScanDataModel.xcdatamodeld */; };
+		1FD6534E2DE2185600DBE5A8 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 1FD6534D2DE2185600DBE5A8 /* Config.xcconfig */; };
+		1FD653522DE21A9800DBE5A8 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 1FD653512DE21A9300DBE5A8 /* .gitignore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		1FCE58292DE082FB00BC7FFC /* VegieScanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VegieScanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1FCE58492DE0849A00BC7FFC /* ScanDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ScanDataModel.xcdatamodel; sourceTree = "<group>"; };
+		1FD6534D2DE2185600DBE5A8 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		1FD653512DE21A9300DBE5A8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1FD653502DE219AD00DBE5A8 /* Exceptions for "VegieScanner" folder in "VegieScanner" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 1FCE58282DE082FB00BC7FFC /* VegieScanner */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		1FCE582B2DE082FB00BC7FFC /* VegieScanner */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1FD653502DE219AD00DBE5A8 /* Exceptions for "VegieScanner" folder in "VegieScanner" target */,
+			);
 			path = VegieScanner;
 			sourceTree = "<group>";
 		};
@@ -32,8 +54,11 @@
 		1FCE58202DE082FB00BC7FFC = {
 			isa = PBXGroup;
 			children = (
+				1FD6534D2DE2185600DBE5A8 /* Config.xcconfig */,
+				1FCE58482DE0849A00BC7FFC /* ScanDataModel.xcdatamodeld */,
 				1FCE582B2DE082FB00BC7FFC /* VegieScanner */,
 				1FCE582A2DE082FB00BC7FFC /* Products */,
+				1FD653512DE21A9300DBE5A8 /* .gitignore */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,6 +134,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FD6534E2DE2185600DBE5A8 /* Config.xcconfig in Resources */,
+				1FD653522DE21A9800DBE5A8 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FCE584A2DE0849A00BC7FFC /* ScanDataModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +271,7 @@
 		};
 		1FCE58362DE082FD00BC7FFC /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1FD6534D2DE2185600DBE5A8 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -253,6 +282,9 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VegieScanner/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to take food photos.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to choose food photos from your gallery.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -272,16 +304,18 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
 			name = Debug;
 		};
 		1FCE58372DE082FD00BC7FFC /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1FD6534D2DE2185600DBE5A8 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -292,6 +326,9 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VegieScanner/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to take food photos.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to choose food photos from your gallery.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -311,10 +348,11 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.4;
 			};
 			name = Release;
@@ -341,6 +379,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		1FCE58482DE0849A00BC7FFC /* ScanDataModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				1FCE58492DE0849A00BC7FFC /* ScanDataModel.xcdatamodel */,
+			);
+			currentVersion = 1FCE58492DE0849A00BC7FFC /* ScanDataModel.xcdatamodel */;
+			path = ScanDataModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 1FCE58212DE082FB00BC7FFC /* Project object */;
 }
