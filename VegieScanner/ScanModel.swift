@@ -8,20 +8,20 @@
 import Foundation
 import SwiftUI
 
-enum VeganStatus: Int16, Codable {
+enum VegStatus: Int16, Codable {
     case uncertain = 0
-    case vegan = 1
-    case notVegan = 2
+    case veg = 1
+    case notVeg = 2
 }
 
 struct ScanResult: Identifiable, Codable {
     let id: UUID
-    let status: VeganStatus
+    let status: VegStatus
     let confidence: Int
     let explanation: String
     let imageData: Data
 
-    init(id: UUID = UUID(), status: VeganStatus, confidence: Int, explanation: String, imageData: Data) {
+    init(id: UUID = UUID(), status: VegStatus, confidence: Int, explanation: String, imageData: Data) {
         self.id = id
         self.status = status
         self.confidence = confidence
@@ -32,16 +32,16 @@ struct ScanResult: Identifiable, Codable {
 
 // MARK: - UI Helpers
 extension ScanResult {
-    var isVegan: Bool {
-        return status == .vegan
+    var isVeg: Bool {
+        return status == .veg
     }
 
     var statusText: String {
         switch status {
-        case .vegan:
-            return "Vegan"
-        case .notVegan:
-            return "Not Vegan"
+        case .veg:
+            return "Veg"
+        case .notVeg:
+            return "Not Veg"
         case .uncertain:
             return "Uncertain"
         }
@@ -49,9 +49,9 @@ extension ScanResult {
 
     var statusColor: Color {
         switch status {
-        case .vegan:
+        case .veg:
             return .green
-        case .notVegan:
+        case .notVeg:
             return .red
         case .uncertain:
             return .gray

@@ -26,7 +26,7 @@ class CoreDataManager {
         let context = container.viewContext
         let entity = ScanEntity(context: context)
         entity.id = scan.id
-        entity.isVegan = scan.status.rawValue
+        entity.isVeg = scan.status.rawValue
         entity.confidence = Int16(scan.confidence)
         entity.explanation = scan.explanation
         entity.imageData = scan.imageData
@@ -44,7 +44,7 @@ class CoreDataManager {
             return try context.fetch(request).map {
                 ScanResult(
                     id: $0.id ?? UUID(),
-                    status: VeganStatus(rawValue: $0.isVegan) ?? .uncertain,
+                    status: VegStatus(rawValue: $0.isVeg) ?? .uncertain,
                     confidence: Int($0.confidence),
                     explanation: $0.explanation ?? "",
                     imageData: $0.imageData ?? Data()

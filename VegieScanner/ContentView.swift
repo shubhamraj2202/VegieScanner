@@ -24,7 +24,7 @@ struct ContentView: View {
                             Text("Scan Your Food")
                                 .font(.title)
                                 .foregroundColor(.white)
-                            Text("Instantly check if it's vegan-friendly")
+                            Text("Instantly check if it's veg-friendly")
                                 .font(.callout)
                                 .foregroundColor(.white.opacity(0.8))
                         }
@@ -91,7 +91,7 @@ struct ContentView: View {
                                 .scaleEffect(1.5)
                             Text("Analyzing Your Food")
                                 .font(.headline)
-                            Text("Our AI is checking if it's vegan...")
+                            Text("Our AI is checking if it's veg...")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }

@@ -8,14 +8,6 @@ import Foundation
 import UIKit
 import SwiftUI
 
-//struct ScanResult: Identifiable, Codable {
-//    let id = UUID()
-//    let isVegan: Bool
-//    let confidence: Int
-//    let explanation: String
-//    let imageData: Data
-//}
-
 
 class GeminiAPI {
     static let shared = GeminiAPI()
@@ -35,29 +27,7 @@ class GeminiAPI {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let base64Image = imageData.base64EncodedString()
-        // let prompt = "Is the food in this image vegan? Be detailed and explain why or why not. Provide a confidence percentage."
-//        let prompt = """
-//        Is the food in this image vegan? Answer with one of these exact keywords only: "Vegan", "Not Vegan", or "Uncertain". Then give a detailed explanation and a confidence percentage.
-//
-//        Format your response exactly like this:
-//
-//        Status: <Vegan / Not Vegan / Uncertain>
-//        Confidence: <number>%
-//        Explanation: <detailed explanation here>
-//        """
-//        let prompt = """
-//        Is the food in this image vegan? Identify the food name as precisely as possible. Answer with one of these exact keywords only: "Vegan", "Not Vegan", or "Uncertain". Then give a detailed explanation and a confidence percentage.
-//
-//        Format your response exactly like this:
-//
-//        Food Name: <name or description of food>
-//        Status: <Vegan / Not Vegan / Uncertain>
-//        Confidence: <number>%
-//        Explanation: <detailed explanation here>
-//        """
-        
         let isStrictVeganMode = UserDefaults.standard.bool(forKey: "isStrictVeganMode")
-        
         let prompt: String
         if isStrictVeganMode {
             prompt = """
@@ -110,7 +80,6 @@ class GeminiAPI {
         // Parse vegan status + confidence from response
         let (_, status, confidence, explanation) = parseStructuredResponse(text)
         return ScanResult(status: status, confidence: confidence, explanation: explanation, imageData: imageData)
-        // analyzeImagereturn ScanResult(status: status, confidence: confidence, explanation: explanation, imageData: imageData, foodName: foodName)
     }
 
     private func extractConfidence(from text: String) -> Int {
@@ -123,9 +92,9 @@ class GeminiAPI {
     }
 }
 
-func parseStructuredResponse(_ text: String) -> (foodName: String, status: VeganStatus, confidence: Int, explanation: String) {
+func parseStructuredResponse(_ text: String) -> (foodName: String, status: VegStatus, confidence: Int, explanation: String) {
     var foodName = ""
-    var status: VeganStatus = .uncertain
+    var status: VegStatus = .uncertain
     var confidence: Int = 0
     var explanation = ""
 
@@ -135,17 +104,11 @@ func parseStructuredResponse(_ text: String) -> (foodName: String, status: Vegan
             foodName = line.dropFirst("food name:".count).trimmingCharacters(in: .whitespacesAndNewlines)
         } else if line.lowercased().starts(with: "status:") {
             let value = line.dropFirst("status:".count).trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-//            switch value {
-//                case "vegan": status = .vegan
-//                case "not vegan": status = .notVegan
-//                case "uncertain": status = .uncertain
-//                default: status = .uncertain
-//            }
             switch value {
             case "vegan", "vegetarian":
-                status = .vegan
+                status = .veg
             case "not vegan", "not vegetarian":
-                status = .notVegan
+                status = .notVeg
             case "uncertain":
                 status = .uncertain
             default:

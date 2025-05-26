@@ -56,11 +56,11 @@ struct ScanResultView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func icon(for status: VeganStatus) -> String {
+    private func icon(for status: VegStatus) -> String {
         switch status {
-        case .vegan:
+        case .veg:
             return "✅"
-        case .notVegan:
+        case .notVeg:
             return "❌"
         case .uncertain:
             return "❓"
