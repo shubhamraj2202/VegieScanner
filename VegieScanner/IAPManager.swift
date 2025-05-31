@@ -9,6 +9,10 @@ import Foundation
 import StoreKit
 import SwiftUI
 
+extension Notification.Name {
+    static let didRestorePurchase = Notification.Name("didRestorePurchase")
+}
+
 class IAPManager: NSObject, ObservableObject {
     static let shared = IAPManager()
     
@@ -23,7 +27,7 @@ class IAPManager: NSObject, ObservableObject {
             UserDefaults.standard.set(monthlyScansUsed, forKey: AppConstants.UserDefaultsKeys.monthlyScansUsed)
         }
     }
-    
+
     private override init() {
         self.isPremiumUser = UserDefaults.standard.bool(forKey: AppConstants.UserDefaultsKeys.isPremiumUser)
         self.monthlyScansUsed = UserDefaults.standard.integer(forKey: AppConstants.UserDefaultsKeys.monthlyScansUsed)
@@ -32,6 +36,15 @@ class IAPManager: NSObject, ObservableObject {
         SKPaymentQueue.default().add(self)
         fetchProducts()
         checkAndResetMonthlyScans()
+        autoRestoreIfFirstLaunch()
+    }
+
+    private func autoRestoreIfFirstLaunch() {
+        let key = "hasLaunchedBefore"
+        if !UserDefaults.standard.bool(forKey: key) {
+            UserDefaults.standard.set(true, forKey: key)
+            restorePurchases()
+        }
     }
     
     deinit {
@@ -158,6 +171,7 @@ extension IAPManager: SKPaymentTransactionObserver {
     private func handlePurchaseSuccess(_ transaction: SKPaymentTransaction) {
         DispatchQueue.main.async {
             self.isPremiumUser = true
+            NotificationCenter.default.post(name: .didRestorePurchase, object: nil)
         }
         SKPaymentQueue.default().finishTransaction(transaction)
     }
