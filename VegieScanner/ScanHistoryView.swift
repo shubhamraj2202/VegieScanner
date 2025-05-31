@@ -1,5 +1,5 @@
 // ScanHistoryView.swift
-
+// Refactored with centralized constants
 
 import SwiftUI
 
@@ -33,41 +33,56 @@ struct ScanHistoryPreview: View {
 
                 // Grid
                 LazyVGrid(columns: columns, spacing: 8) {
-                    ForEach(scans.prefix(10)) { scan in
+                    ForEach(scans.prefix(AppConstants.Config.maxRecentScans)) { scan in
                         Button {
                             onSelect(scan)
                         } label: {
-                            VStack(spacing: 0.1) {
+                            VStack(spacing: 4) {
                                 if let image = UIImage(data: scan.imageData) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
                                         .frame(width: 50, height: 50)
                                         .clipShape(RoundedRectangle(cornerRadius: 6))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .stroke(scan.statusColor, lineWidth: 2)
+                                        )
                                 }
-                                Text(scan.status == .veg ? "Veg" :
-                                        scan.status == .notVeg ? "Not Veg" : "Uncertain")
-                                .font(.caption)
-                                .foregroundColor(scan.status == .veg ? .green : .red)
+                                
+                                Text(scan.statusText)
+                                    .font(.caption2)
+                                    .foregroundColor(scan.statusColor)
+                                    .fontWeight(.semibold)
+                                
+                                Text("\(scan.confidence)%")
+                                    .font(.caption2)
+                                    .foregroundColor(.secondary)
                             }
                         }
+                        .buttonStyle(PlainButtonStyle())
                     }
                 }
                 .padding(.horizontal)
             }
 
             // Pro Tip — always shown
-            HStack(alignment: .top, spacing: 6) {
+            HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "lightbulb.fill")
                     .font(.title2)
                     .foregroundColor(.yellow)
+                    .frame(width: 30)
+                
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Pro Tip")
+                    Text(AppConstants.UI.proTipTitle)
                         .font(.headline)
-                    Text("For best results, ensure ingredients lists or food are clearly visible and well-lit. AI can analyze both whole foods and ingredients, but it can make mistakes!")
-                        .font(.caption2)
+                    Text(AppConstants.UI.proTipText)
+                        .font(.caption)
                         .foregroundColor(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+                
+                Spacer()
             }
             .padding()
             .background(.ultraThinMaterial)
@@ -75,7 +90,14 @@ struct ScanHistoryPreview: View {
             .padding(.horizontal, 8)
         }
         .onAppear {
-            scans = CoreDataManager.shared.loadRecentScans()
+            loadScans()
         }
+        .onReceive(NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)) { _ in
+            loadScans()
+        }
+    }
+    
+    private func loadScans() {
+        scans = CoreDataManager.shared.loadRecentScans(limit: AppConstants.Config.maxRecentScans)
     }
 }

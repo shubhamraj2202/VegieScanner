@@ -2,7 +2,63 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- API Configuration -->
 	<key>GeminiAPIKey</key>
 	<string>$(GEMINI_API_KEY)</string>
+	<key>GeminiModel</key>
+	<string>gemini-1.5-flash</string>
+	<key>ImageCompressionQuality</key>
+	<real>0.8</real>
+	<key>MaxRecentScans</key>
+	<integer>10</integer>
+	
+	<!-- UI Text Constants -->
+	<key>AppTitle</key>
+	<string>Is It Vegie?</string>
+	<key>AppSubtitle</key>
+	<string>Scan Your Food</string>
+	<key>AppDescription</key>
+	<string>Instantly check if it's veg-friendly</string>
+	<key>AnalyzingTitle</key>
+	<string>Analyzing Your Food</string>
+	<key>AnalyzingSubtitle</key>
+	<string>Our AI is checking if it's veg...</string>
+	<key>ProTipTitle</key>
+	<string>Pro Tip</string>
+	<key>ProTipText</key>
+	<string>For best results, ensure ingredients lists or food are clearly visible and well-lit. AI can analyze both whole foods and ingredients, but it can make mistakes!</string>
+	<key>NoInternetTitle</key>
+	<string>No Internet Connection</string>
+	<key>NoInternetMessage</key>
+	<string>Please check your internet connection and try again.</string>
+	
+	<!-- AI Prompts -->
+	<key>VeganPrompt</key>
+	<string>Is the food in this image vegan? Strictly flag any dairy, eggs, or animal-derived ingredients as not vegan. Identify the food name as precisely as possible. Answer with one of these exact keywords only: "Vegan", "Not Vegan", or "Uncertain". Then give a detailed explanation and a confidence percentage.
+
+Format your response exactly like this:
+
+Food Name: &lt;name or description of food&gt;
+Status: &lt;Vegan / Not Vegan / Uncertain&gt;
+Confidence: &lt;number&gt;%
+Explanation: &lt;detailed explanation here&gt;</string>
+	
+	<key>VegetarianPrompt</key>
+	<string>Is the food in this image vegetarian? Dairy products like milk, butter, paneer, or cheese are allowed. Avoid meat, fish, and eggs. Identify the food name as precisely as possible. Answer with one of these exact keywords only: "Vegetarian", "Not Vegetarian", or "Uncertain". Then give a detailed explanation and a confidence percentage.
+
+Format your response exactly like this:
+
+Food Name: &lt;name or description of food&gt;
+Status: &lt;Vegetarian / Not Vegetarian / Uncertain&gt;
+Confidence: &lt;number&gt;%
+Explanation: &lt;detailed explanation here&gt;</string>
+	
+	<!-- Support URLs -->
+	<key>SupportEmail</key>
+	<string>aurax.ai108@gmail.com</string>
+	<key>TermsURL</key>
+	<string>https://docs.google.com/document/d/e/2PACX-1vSwBtdgx33nAUofbKZyBG38cQMAdlmTBKRFua7otwGeuIpEeiM_McZ8qQ1Lw6HSQZn447JgC3cEHX6W/pub</string>
+	<key>PrivacyURL</key>
+	<string>https://docs.google.com/document/d/e/2PACX-1vTRiRqZMBUw9SFSAoe9AgXIg6uoEPMggC0_nN-gfIV9L4PDkKU4rb92nFKTBz6wN9Z_9PnwU87esFqP/pub</string>
 </dict>
 </plist>

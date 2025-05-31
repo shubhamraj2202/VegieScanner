@@ -34,36 +34,6 @@
             endingLineNumber = "101"
             landmarkName = "analyze(image:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "96F891E9-F91C-47AA-8256-5783CFF7E275 - ac2238d12ed020e5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for VegieScanner.GeminiAPI.analyze(image: __C.UIImage) async throws -&gt; Swift.Optional&lt;VegieScanner.ScanResult&gt;"
-                  moduleName = "VegieScanner.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/shubhamraj2202/Desktop/iOSApps/VegieScanner/VegieScanner/GeminiAPI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "102"
-                  endingLineNumber = "102">
-               </Location>
-               <Location
-                  uuid = "96F891E9-F91C-47AA-8256-5783CFF7E275 - ac2238d12ed020c4"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "(1) suspend resume partial function for VegieScanner.GeminiAPI.analyze(image: __C.UIImage) async throws -&gt; Swift.Optional&lt;VegieScanner.ScanResult&gt;"
-                  moduleName = "VegieScanner.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/shubhamraj2202/Desktop/iOSApps/VegieScanner/VegieScanner/GeminiAPI.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "101"
-                  endingLineNumber = "101">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

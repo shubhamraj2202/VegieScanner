@@ -2,57 +2,63 @@
 //  GeminiAPI.swift
 //  VegieScanner
 //
-//  Created by Shubham Raj on 23/05/25.
+//  Refactored with centralized constants and better error handling
 //
+
 import Foundation
 import UIKit
 import SwiftUI
 
+enum APIError: Error, LocalizedError {
+    case noInternet
+    case invalidImage
+    case invalidResponse
+    case rateLimitExceeded
+    case serverError(String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .noInternet:
+            return "No internet connection available"
+        case .invalidImage:
+            return "Unable to process the selected image"
+        case .invalidResponse:
+            return "Invalid response from server"
+        case .rateLimitExceeded:
+            return "Rate limit exceeded. Please try again later"
+        case .serverError(let message):
+            return "Server error: \(message)"
+        }
+    }
+}
 
 class GeminiAPI {
     static let shared = GeminiAPI()
     private init() {}
 
     func analyze(image: UIImage) async throws -> ScanResult? {
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else { return nil }
+        // Check network connectivity
+        guard NetworkManager.shared.isConnected else {
+            throw APIError.noInternet
+        }
         
-        let apiKey = Bundle.main.infoDictionary?["GeminiAPIKey"] as? String ?? ""
-        assert(!apiKey.isEmpty, "Gemini API key is missing from Info.plist")
-        guard let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=\(apiKey)") else {
-            return nil
+        guard let imageData = image.jpegData(compressionQuality: AppConstants.Config.imageCompressionQuality) else {
+            throw APIError.invalidImage
+        }
+        
+        let apiKey = AppConstants.Config.geminiAPIKey
+        guard let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\(AppConstants.Config.geminiModel):generateContent?key=\(apiKey)") else {
+            throw APIError.serverError("Invalid API URL")
         }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.timeoutInterval = 30.0
 
         let base64Image = imageData.base64EncodedString()
-        let isStrictVeganMode = UserDefaults.standard.bool(forKey: "isStrictVeganMode")
-        let prompt: String
-        if isStrictVeganMode {
-            prompt = """
-            Is the food in this image vegan? Strictly flag any dairy, eggs, or animal-derived ingredients as not vegan. Identify the food name as precisely as possible. Answer with one of these exact keywords only: "Vegan", "Not Vegan", or "Uncertain". Then give a detailed explanation and a confidence percentage.
-
-            Format your response exactly like this:
-
-            Food Name: <name or description of food>
-            Status: <Vegan / Not Vegan / Uncertain>
-            Confidence: <number>%
-            Explanation: <detailed explanation here>
-            """
-        } else {
-            prompt = """
-            Is the food in this image vegetarian? Dairy products like milk, butter, paneer, or cheese are allowed. Avoid meat, fish, and eggs. Identify the food name as precisely as possible. Answer with one of these exact keywords only: "Vegetarian", "Not Vegetarian", or "Uncertain". Then give a detailed explanation and a confidence percentage.
-
-            Format your response exactly like this:
-
-            Food Name: <name or description of food>
-            Status: <Vegetarian / Not Vegetarian / Uncertain>
-            Confidence: <number>%
-            Explanation: <detailed explanation here>
-            """
-        }
-        
+        let isStrictVeganMode = UserDefaults.standard.bool(forKey: AppConstants.UserDefaultsKeys.isStrictVeganMode)
+        let prompt = isStrictVeganMode ? AppConstants.Prompts.veganPrompt : AppConstants.Prompts.vegetarianPrompt
 
         let requestBody: [String: Any] = [
             "contents": [
@@ -65,45 +71,69 @@ class GeminiAPI {
                         ]]
                     ]
                 ]
+            ],
+            "generationConfig": [
+                "temperature": 0.1,
+                "topK": 1,
+                "topP": 1,
+                "maxOutputTokens": 2048
             ]
         ]
 
-        request.httpBody = try? JSONSerialization.data(withJSONObject: requestBody)
-
-        let (data, _) = try await URLSession.shared.data(for: request)
-
-        guard let response = try? JSONDecoder().decode(GeminiResponse.self, from: data),
-              let text = response.candidates.first?.content.parts.first?.text else {
-            return nil
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        } catch {
+            throw APIError.serverError("Failed to encode request")
         }
 
-        // Parse vegan status + confidence from response
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // Check HTTP status
+        if let httpResponse = response as? HTTPURLResponse {
+            switch httpResponse.statusCode {
+            case 200...299:
+                break
+            case 429:
+                throw APIError.rateLimitExceeded
+            default:
+                throw APIError.serverError("HTTP \(httpResponse.statusCode)")
+            }
+        }
+
+        guard let geminiResponse = try? JSONDecoder().decode(GeminiResponse.self, from: data),
+              let text = geminiResponse.candidates.first?.content.parts.first?.text else {
+            throw APIError.invalidResponse
+        }
+
+        // Parse the structured response
         let (_, status, confidence, explanation) = parseStructuredResponse(text)
-        return ScanResult(status: status, confidence: confidence, explanation: explanation, imageData: imageData)
-    }
-
-    private func extractConfidence(from text: String) -> Int {
-        let pattern = #"(\d{1,3})\s*%"#
-        if let match = text.range(of: pattern, options: .regularExpression) {
-            let percentStr = text[match].replacingOccurrences(of: "%", with: "")
-            return Int(percentStr.trimmingCharacters(in: .whitespaces)) ?? 0
-        }
-        return 0
+        
+        return ScanResult(
+            status: status,
+            confidence: confidence,
+            explanation: explanation.isEmpty ? "Analysis completed" : explanation,
+            imageData: imageData
+        )
     }
 }
 
 func parseStructuredResponse(_ text: String) -> (foodName: String, status: VegStatus, confidence: Int, explanation: String) {
     var foodName = ""
     var status: VegStatus = .uncertain
-    var confidence: Int = 0
+    var confidence: Int = 50 // Default confidence
     var explanation = ""
+    var collectingExplanation = false
 
     let lines = text.components(separatedBy: "\n")
     for line in lines {
-        if line.lowercased().starts(with: "food name:") {
-            foodName = line.dropFirst("food name:".count).trimmingCharacters(in: .whitespacesAndNewlines)
-        } else if line.lowercased().starts(with: "status:") {
-            let value = line.dropFirst("status:".count).trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lowercaseLine = trimmedLine.lowercased()
+        
+        if lowercaseLine.hasPrefix("food name:") {
+            foodName = String(trimmedLine.dropFirst("food name:".count)).trimmingCharacters(in: .whitespacesAndNewlines)
+            collectingExplanation = false
+        } else if lowercaseLine.hasPrefix("status:") {
+            let value = String(trimmedLine.dropFirst("status:".count)).trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
             switch value {
             case "vegan", "vegetarian":
                 status = .veg
@@ -114,18 +144,24 @@ func parseStructuredResponse(_ text: String) -> (foodName: String, status: VegSt
             default:
                 status = .uncertain
             }
-        } else if line.lowercased().starts(with: "confidence:") {
-            let value = line.dropFirst("confidence:".count).trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: "%", with: "")
-            confidence = Int(value) ?? 0
-        } else if line.lowercased().starts(with: "explanation:") {
-            explanation = line.dropFirst("explanation:".count).trimmingCharacters(in: .whitespacesAndNewlines)
-        } else {
-            // Append multiline explanation
-            if !explanation.isEmpty {
-                explanation += "\n" + line
-            }
+            collectingExplanation = false
+        } else if lowercaseLine.hasPrefix("confidence:") {
+            let value = String(trimmedLine.dropFirst("confidence:".count))
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .replacingOccurrences(of: "%", with: "")
+            confidence = Int(value) ?? 50
+            collectingExplanation = false
+        } else if lowercaseLine.hasPrefix("explanation:") {
+            explanation = String(trimmedLine.dropFirst("explanation:".count)).trimmingCharacters(in: .whitespacesAndNewlines)
+            collectingExplanation = true
+        } else if collectingExplanation && !trimmedLine.isEmpty {
+            // Continue collecting explanation text
+            explanation += " " + trimmedLine
         }
     }
+    
+    // Ensure confidence is within valid range
+    confidence = max(0, min(100, confidence))
 
     return (foodName, status, confidence, explanation)
 }
